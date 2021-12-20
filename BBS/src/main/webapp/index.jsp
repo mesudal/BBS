@@ -1,12 +1,14 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
-<title>Insert title here</title>
+<meta charset="UTF-8">
+<title>JSP Web BBS Site</title>
 </head>
 <body>
-	여기서 시작이 되려나ㅣ??
+	<script>
+		location.href = "login.jsp";
+	</script>
 </body>
 </html>
