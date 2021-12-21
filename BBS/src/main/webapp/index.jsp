@@ -4,11 +4,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>JSP Web BBS Site</title>
+<title>Insert title here</title>
 </head>
 <body>
 	<script>
-		location.href = "login.jsp";
+		location.href = 'login.jsp';
 	</script>
 </body>
 </html>
