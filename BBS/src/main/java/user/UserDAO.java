@@ -20,6 +20,7 @@ public class UserDAO {
 		}catch(Exception e) {e.printStackTrace();}
 	}
 	
+	/* login Function */
 	public int login(String userID, String userPassword) {
 		String SQL = "SELECT userPassword FROM USER WHERE userID = ?";
 		try {
@@ -27,17 +28,18 @@ public class UserDAO {
 			pstmt.setString(1, userID);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				if(rs.getString(1).equals(userPassword)) {
-					return 1; // 로그인 성공
+				if(rs.getString(1).equals(userPassword)) { // 사용자가 입력한 ID의 Pw가 로그인시 입력한 Pw와 일치할 경우
+					return 1; // Login Access
 				}
 				else {
-					return 0; // 로그인 PW 틀림
+					return 0; // Pw Error
 				}
-				return -1; // 로그인 ID가 존재하지 않음
 			}
+			return -1; // ID = Null
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return -2; //DB Error
 	}
 }
