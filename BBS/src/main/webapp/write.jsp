@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width", initial-scale="1">
 <link rel="stylesheet" href="css/bootstrap.css">
-<title>Board WEB PAGE</title>
+<title>Board Write Page</title>
 </head>
 <body>
 	<%
@@ -69,25 +69,24 @@
 	<!-- Board Form -->
 	<div class="container">
 		<div class="row"> <!-- 하나의 행 -> 가로줄 -->
+		<form method="post" action="writeAction.jsp">
 			<table class="table table-striped" style="text-align:center; border:1px solid #dddddd">
 				<thead> <!-- 테이블의 헤더, 제목부분 -->
 					<tr>
-						<th style="backgroun-color:#eeeeee; text-align:center;">번호</th>
-						<th style="backgroun-color:#eeeeee; text-align:center;">제목</th>
-						<th style="backgroun-color:#eeeeee; text-align:center;">작성자</th>
-						<th style="backgroun-color:#eeeeee; text-align:center;">작성일</th>
+						<th colspan="2" style="backgroun-color:#eeeeee; text-align:center;">게시판 글쓰기 양식</th>
 					</tr>
 				</thead>
 				<tbody>
+					<tr> <!-- 글제목과 글내용이 각각 가로 한 줄의 영역에 출력될 수 있도록 tr로 감싼다 -->
+						<td><input type="text" class="form-control" placeholder="글제목" name="boardTitle" maxlength="50"></td>
+					</tr>
 					<tr>
-						<td>1</td>
-						<td>김덕배</td>
-						<td>안녕하세요</td>
-						<td>2021-12-26</td>
+						<td><textarea class="form-control" placeholder="글내용" name="boardContent" maxlength="2048" style="height:350px"></textarea></td>
 					</tr>
 				</tbody>
 			</table>
-			<a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
+			<input type="submit" class="btn btn-primary pull-right" value="글쓰기">
+		</form>
 		</div>
 	</div>
 	<script src = "https://code.jquery.com/jquery-3.1.1.min.js"></script>

@@ -7,6 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-	8강 3분 50초부터...
+	https://youtu.be/EmbxlHakkfY?list=PLRx0vPvlEmdAZv_okJzox5wj2gG_fNh_6&t=190
 </body>
 </html>
