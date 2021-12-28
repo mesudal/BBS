@@ -3,27 +3,32 @@
 <%@ page import = "java.io.PrintWriter" %>
 <%@ page import = "board.BoardDAO" %>
 <%@ page import = "board.Board" %>
-<%@ page import = "java.util.ArrayList" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width", initial-scale="1">
 <link rel="stylesheet" href="css/bootstrap.css">
-<title>Board WEB PAGE</title>
+<title>Board Write Page</title>
 </head>
 <body>
 	<%
-		/* 현재 로그인한 상태인지 알기 위한 변수 */
 		String userID = null;
 		if(session.getAttribute("userID") != null) {
 			userID = (String) session.getAttribute("userID");
 		}
-		/* 현재의 페이지를 카운트하기 위함 */
-		int pageNumber = 1;
-		if(request.getParameter("pageNumber") != null) { //DAO에 있는 pageNumber값이 Null이 아닌 경우 pageNumber 변수에 저장
-			pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
+		int boardID = 0;
+		if(request.getParameter("boardID") != null) { //클릭한 게시글의 boardID(게시글번호)를 저장하는 변수
+			boardID = Integer.parseInt(request.getParameter("boardID"));
 		}
+		if(boardID == 0) {
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("alert('유효하지 않은 글입니다.')");
+			script.println("location.href = 'board.jsp'");
+			script.println("</script>");
+		}
+		Board board = new BoardDAO().getBoard(boardID); //만약 존재하는 boardID일 경우 Board 인스턴스 안에 저장
 	%>
 	<nav class = "navbar navbar-default">
 		<!-- Navbar Menu -->
@@ -77,45 +82,42 @@
 	
 	<!-- Board Form -->
 	<div class="container">
-		<div class="row"> <!-- 하나의 행 -> 가로줄 -->
-			<table class="table table-striped" style="text-align:center; border:1px solid #dddddd">
-				<thead> <!-- 테이블의 헤더, 제목부분 -->
+		<div class="row">
+			<table class="table table-striped" style="text-align:center; border: 1px solid #dddddd">
+				<thead>
 					<tr>
-						<th style="backgroun-color:#eeeeee; text-align:center;">번호</th>
-						<th style="backgroun-color:#eeeeee; text-align:center;">제목</th>
-						<th style="backgroun-color:#eeeeee; text-align:center;">작성자</th>
-						<th style="backgroun-color:#eeeeee; text-align:center;">작성일</th>
+						<th colspan="3" style="background-color: #eeeeee; text-align: center;">게시판 글보기</th>
 					</tr>
 				</thead>
 				<tbody>
-					<%
-						BoardDAO boardDAO = new BoardDAO();
-						ArrayList<Board> list = boardDAO.getList(pageNumber); //BoardDAO의 getList 객체를 이용하여 pageNumber까지의 글을 list 배열에 저장
-						for(int i=0; i<list.size(); i++) {
-					%>
-						<tr>
-							<td><%=list.get(i).getBoardID() %></td>
-							<td><a href="view.jsp?boardID=<%= list.get(i).getBoardID()%>"><%=list.get(i).getBoardTitle()%></a></td>
-							<td><%=list.get(i).getUserID() %></td>
-							<td><%=list.get(i).getBoardDate()%></td>
-						</tr>
-					<%	
-						}
-					%>
+					<tr>
+						<td style="width: 20%;">글제목</td>
+						<td colspan="2"><%= board.getBoardTitle() %></td>
+					</tr>
+					<tr>
+						<td style="width: 20%;">작성자</td>
+						<td colspan="2"><%= board.getUserID() %></td>
+					</tr>
+					<tr>
+						<td style="width: 20%;">작성일</td>
+						<td colspan="2"><%= board.getBoardDate() %></td>
+					</tr>
+					<tr>
+						<td style="width: 20%;">내용</td>
+						<td colspan="2" style="min-height: 200px; text-align: left;"><%= board.getBoardContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt").replace(">", "&gt").replace("\n", "<br>") %></td>
+						<!-- Content에서는 사용자가 공백(" ") 혹은 꺽새(>,<) 혹은 들여쓰기(\n) 등을 사용할 수 있게끔 해당 문자들은 모두 정상적으로 처리할 수 있게끔 해야 한다 -->
+					</tr>
 				</tbody>
 			</table>
+			<a href="board.jsp" class="btn btn-primary">목록</a>
 			<%
-				if(pageNumber != 1) { //PageNumber가 1 이상인 경우 즉, 게시글이 11개 이상인 경우
+				if(userID != null && userID.equals(board.getUserID())) { //현재 로그인한 아이디가 작성자의 아이디와 일치하는 경우
 			%>
-				<a href="board.jsp?pageNumber=<%=pageNumber-1 %>" class = "btn btn-success btn-arraw-left">이전</a>
-			<%
-				} if(boardDAO.nextPage(pageNumber + 1)) {
-			%>
-				<a href="board.jsp?pageNumber=<%=pageNumber+1 %>" class = "btn btn-success btn-arraw-right">다음</a>
-			<%
+					<a href="update.jsp?boardID=<%=boardID %>" class="btn btn-primary">수정</a>
+					<a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteAction.jsp?boardID=<%=boardID %>" class="btn btn-primary">삭제</a>
+			<%	
 				}
 			%>
-			<a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
 		</div>
 	</div>
 	<script src = "https://code.jquery.com/jquery-3.1.1.min.js"></script>

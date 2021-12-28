@@ -111,4 +111,55 @@ public class BoardDAO {
 		}
 		return false;
 	}
+	
+	/* View Function */
+	public Board getBoard(int boardID) {
+		String SQL = "SELECT * FROM Board WHERE BoardID = ?"; //클릭한 게시글의 정보를 하나하나 출력
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, boardID);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				Board board = new Board();
+				board.setBoardID(rs.getInt(1));
+				board.setBoardTitle(rs.getString(2));
+				board.setUserID(rs.getString(3));
+				board.setBoardDate(rs.getString(4));
+				board.setBoardContent(rs.getString(5));
+				board.setBoardAvailable(rs.getInt(6));
+				return board;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/* Post Update Function */
+	public int update(int boardID, String boardTitle, String boardContent) {
+		String SQL = "UPDATE BOARD SET boardTitle = ?, boardContent = ? WHERE boardID = ?";
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, boardTitle);
+			pstmt.setString(2, boardContent);
+			pstmt.setInt(3, boardID);
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1; //DB ERROR
+	}
+	
+	/* Post Delete Function */
+	public int delete(int boardID) {
+		String SQL = "UPDATE BOARD SET boardAvailable = 0 WHERE boardID = ?"; //Available을 0으로 바꾸는 이유는 나중에 삭제된 게시글을 복구하거나 조회할 수 있게끔 하기 위함이다
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, boardID);
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1; //DB ERROR
+	}
 }
