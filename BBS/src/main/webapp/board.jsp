@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import = "java.io.PrintWriter" %>
+<%@ page import = "board.BoardDAO" %>
+<%@ page import = "board.Board" %>
+<%@ page import = "java.util.ArrayList" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,9 +14,15 @@
 </head>
 <body>
 	<%
+		/* 현재 로그인한 상태인지 알기 위한 변수 */
 		String userID = null;
 		if(session.getAttribute("userID") != null) {
 			userID = (String) session.getAttribute("userID");
+		}
+		/* 현재의 페이지를 카운트하기 위함 */
+		int pageNumber = 1;
+		if(request.getParameter("pageNumber") != null) { //DAO에 있는 pageNumber값이 Null이 아닌 경우 pageNumber 변수에 저장
+			pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
 		}
 	%>
 	<nav class = "navbar navbar-default">
@@ -79,14 +88,33 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>1</td>
-						<td>김덕배</td>
-						<td>안녕하세요</td>
-						<td>2021-12-26</td>
-					</tr>
+					<%
+						BoardDAO boardDAO = new BoardDAO();
+						ArrayList<Board> list = boardDAO.getList(pageNumber); //BoardDAO의 getList 객체를 이용하여 pageNumber까지의 글을 list 배열에 저장
+						for(int i=0; i<list.size(); i++) {
+					%>
+						<tr>
+							<td><%=list.get(i).getBoardID() %></td>
+							<td><a href="view.jsp?BoardID=<%=list.get(i).getBoardID() %>"><%=list.get(i).getBoardTitle() %></a></td>
+							<td><%=list.get(i).getUserID() %></td>
+							<td><%=list.get(i).getBoardDate()%></td>
+						</tr>
+					<%	
+						}
+					%>
 				</tbody>
 			</table>
+			<%
+				if(pageNumber != 1) { //PageNumber가 1 이상인 경우 즉, 게시글이 11개 이상인 경우
+			%>
+				<a href="board.jsp?pageNumber=<%=pageNumber-1 %>" class = "btn btn-success btn-arraw-left">이전</a>
+			<%
+				} if(boardDAO.nextPage(pageNumber + 1)) {
+			%>
+				<a href="board.jsp?pageNumber=<%=pageNumber+1 %>" class = "btn btn-success btn-arraw-right">다음</a>
+			<%
+				}
+			%>
 			<a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
 		</div>
 	</div>
